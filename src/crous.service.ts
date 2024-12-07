@@ -14,11 +14,14 @@ export class CrousService implements OnModuleInit {
     this.logger.log('Loading Crous data from API');
     await this.loadDataFromApi();
     this.logger.log(`${this.storage.length} Crous entries loaded`);
+    if (this.storage.length > 1) {
+      console.log(`First 2 records ->> ${this.storage[0].contact} ${this.storage[1].contact}`);
+    }
   }
 
   private async loadDataFromApi() {
     const url =
-      'https://data.opendatasoft.com/api/records/1.0/search/?dataset=fr_crous_restauration_france_entiere%40mesr&rows=1000';
+      'https://data.opendatasoft.com/api/records/1.0/search/?dataset=fr_crous_restauration_france_entiere%40mesr&rows=50'; // Changed rows to 50
 
     try {
       const response = await firstValueFrom(
@@ -34,16 +37,14 @@ export class CrousService implements OnModuleInit {
           id: fields.id || record.recordid,
           type: fields.type,
           zone: fields.zone,
-          nom: fields.nom,
-          description: fields.description,
+          nom: fields.title,
+          description: fields.short_desc,
           contact: fields.contact,
-          lat: fields.lat,
-          informations: fields.informations,
-          closing: fields.closing,
-          geolocalisation: fields.geolocalisation,
-          zone2: fields.zone2,
-          crousandgo: fields.crousandgo,
-          album: fields.album,
+          info: fields.infos,
+          geolocalisation: {
+            latitude: fields.geolocalisation[0],
+            longitude: fields.geolocalisation[1],
+          },
           photo: fields.photo,
         };
 
@@ -98,4 +99,20 @@ export class CrousService implements OnModuleInit {
     this.storage.splice(index, 1);
     return true;
   }
+
+  getPaginatedCrous(page: number, limit: number): { data: Crous[]; page: number; limit: number; total: number } {
+    const total = this.storage.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const data = this.storage.slice(startIndex, endIndex);
+
+    return {
+      data,
+      page,
+      limit,
+      total,
+    };
+  }
+
 }

@@ -8,6 +8,7 @@ import {
   Param,
   HttpException,
   HttpStatus,
+  Query
 } from '@nestjs/common';
 import { CrousService } from './crous.service';
 import { Crous } from './crous';
@@ -19,6 +20,17 @@ export class CrousController {
   @Get()
   getAllCrous(): Crous[] {
     return this.crousService.getAllCrous();
+  }
+
+  @Get('paginated')
+  getPaginated(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): { data: Crous[]; page: number; limit: number; total: number } {
+    const pageNumber = page ? parseInt(page, 10) : 1;
+    const limitNumber = limit ? parseInt(limit, 10) : 10;
+
+    return this.crousService.getPaginatedCrous(pageNumber, limitNumber);
   }
 
   @Get(':id')
@@ -56,4 +68,5 @@ export class CrousController {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
+
 }
