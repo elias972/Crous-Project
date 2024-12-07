@@ -14,9 +14,6 @@ export class CrousService implements OnModuleInit {
     this.logger.log('Loading Crous data from API');
     await this.loadDataFromApi();
     this.logger.log(`${this.storage.length} Crous entries loaded`);
-    if (this.storage.length > 1) {
-      console.log(`First 2 records ->> ${this.storage[0].contact} ${this.storage[1].contact}`);
-    }
   }
 
   private async loadDataFromApi() {
