@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, map } from 'rxjs';
 import { Crous } from './crous';
+import { images } from './imageData';
 
 @Injectable()
 export class CrousService implements OnModuleInit {
@@ -19,36 +20,41 @@ export class CrousService implements OnModuleInit {
   private async loadDataFromApi() {
     const url =
       'https://data.opendatasoft.com/api/records/1.0/search/?dataset=fr_crous_restauration_france_entiere%40mesr&rows=50'; // Changed rows to 50
-
+  
     try {
       const response = await firstValueFrom(
         this.httpService.get<any>(url).pipe(map((res) => res.data)),
       );
-
+  
       const records = response.records;
 
+
+  
       const crousList: Crous[] = records.map((record) => {
-        const fields = record.fields;
+      const randomImage =
+      images[Math.floor(Math.random() * images.length)];
 
-        const crous: Crous = {
-          id: fields.id || record.recordid,
-          type: fields.type,
-          zone: fields.zone,
-          nom: fields.title,
-          description: fields.short_desc,
-          contact: fields.contact,
-          info: fields.infos,
-          geolocalisation: {
-            latitude: fields.geolocalisation[0],
-            longitude: fields.geolocalisation[1],
-          },
-          photo: fields.photo,
+          const fields = record.fields;
+  
+          const crous: Crous = {
+            id: fields.id || record.recordid,
+            type: fields.type,
+            zone: fields.zone,
+            nom: fields.title,
+            description: fields.short_desc,
+            contact: fields.contact,
+            info: fields.infos,
+            geolocalisation: {
+              latitude: fields.geolocalisation[0],
+              longitude: fields.geolocalisation[1],
+            },
+          photo: randomImage,
           favorite: false
-        };
-
-        return crous;
+          };
+  
+          return crous;
       });
-
+  
       this.storage.push(...crousList);
     } catch (error) {
       this.logger.error('Failed to load data from API', error);
