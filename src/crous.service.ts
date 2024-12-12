@@ -43,6 +43,7 @@ export class CrousService implements OnModuleInit {
             longitude: fields.geolocalisation[1],
           },
           photo: fields.photo,
+          favorite: false
         };
 
         return crous;
@@ -60,10 +61,20 @@ export class CrousService implements OnModuleInit {
       throw new Error(`Crous with ID ${crous.id} already exists`);
     }
     this.storage.push(crous);
+    console.log("created the following ->", crous)
   }
 
   getAllCrous(): Crous[] {
+    console.log("calllllllllllllleddddddddddd ->", this.getAllFav())
     return [...this.storage];
+  }
+
+  getAllFav(): void {
+    const favorites = this.storage.filter((item) => item.favorite);
+    console.log("favs-->>", {
+      total: this.storage.length,
+      favorites,
+    }) ;
   }
 
   getCrous(id: string): Crous {
@@ -110,6 +121,17 @@ export class CrousService implements OnModuleInit {
       limit,
       total,
     };
+  }
+
+  toggleFavorite(id: string): Crous {
+    console.log("uijfheruifheu ->", id)
+    const crous = this.storage.find(item => item.id === id);
+    if (!crous) {
+      throw new Error('Crous not found');
+    }
+    crous.favorite = !crous.favorite; 
+    console.log("uijfheruifheu ->", crous)
+    return crous;
   }
 
 }

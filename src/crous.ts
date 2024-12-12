@@ -8,6 +8,7 @@ export class Crous {
   info?: string;
   geolocalisation?: IGeolocalisation;  
   photo?: string;
+  favorite?: boolean;
 }
 
 export interface IGeolocalisation {

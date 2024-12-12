@@ -22,6 +22,7 @@ export class CrousController {
     return this.crousService.getAllCrous();
   }
 
+  // We will not use this one, since pagination on the frontend
   @Get('paginated')
   getPaginated(
     @Query('page') page?: string,
@@ -51,6 +52,7 @@ export class CrousController {
     }
   }
 
+  // not implemented frontend yet
   @Put(':id')
   updateCrous(@Param('id') id: string, @Body() crous: Crous): Crous {
     try {
@@ -60,6 +62,7 @@ export class CrousController {
     }
   }
 
+  // not implemented frontend yet
   @Delete(':id')
   deleteCrous(@Param('id') id: string): boolean {
     try {
@@ -68,5 +71,15 @@ export class CrousController {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
+
+   
+    @Put('favorite/:id')
+    toggleFavorite(@Param('id') id: string): Crous {
+      try {
+        return this.crousService.toggleFavorite(id);
+      } catch (error) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+    }
 
 }
